@@ -766,7 +766,7 @@ export default defineComponent({
 		> .text {
 			max-width: 100%;
 			min-width: 100%;
-			min-height: 90px;
+			min-height: 300px;
 
 			&.withCw {
 				padding-top: 8px;
