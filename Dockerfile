@@ -26,8 +26,8 @@ RUN pnpm build
 
 FROM node:${NODE_VERSION}-slim AS runner
 
-ARG UID="991"
-ARG GID="991"
+ARG UID="1001"
+ARG GID="1001"
 
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
