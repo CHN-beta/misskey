@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import Redis from 'ioredis';
+import * as Redis from 'ioredis';
 import { DI } from '@/di-symbols.js';
 import { Meta } from '@/models/entities/Meta.js';
 import { GlobalEventService } from '@/core/GlobalEventService.js';
@@ -56,7 +56,7 @@ export class MetaService implements OnApplicationShutdown {
 	@bindThis
 	public async fetch(noCache = false): Promise<Meta> {
 		if (!noCache && this.cache) return this.cache;
-	
+
 		return await this.db.transaction(async transactionalEntityManager => {
 			// 過去のバグでレコードが複数出来てしまっている可能性があるので新しいIDを優先する
 			const metas = await transactionalEntityManager.find(Meta, {
@@ -64,9 +64,9 @@ export class MetaService implements OnApplicationShutdown {
 					id: 'DESC',
 				},
 			});
-	
+
 			const meta = metas[0];
-	
+
 			if (meta) {
 				this.cache = meta;
 				return meta;
@@ -81,7 +81,7 @@ export class MetaService implements OnApplicationShutdown {
 						['id'],
 					)
 					.then((x) => transactionalEntityManager.findOneByOrFail(Meta, x.identifiers[0]));
-	
+
 				this.cache = saved;
 				return saved;
 			}
@@ -120,8 +120,13 @@ export class MetaService implements OnApplicationShutdown {
 	}
 
 	@bindThis
-	public onApplicationShutdown(signal?: string | undefined) {
+	public dispose(): void {
 		clearInterval(this.intervalId);
 		this.redisForSub.off('message', this.onMessage);
+	}
+
+	@bindThis
+	public onApplicationShutdown(signal?: string | undefined): void {
+		this.dispose();
 	}
 }

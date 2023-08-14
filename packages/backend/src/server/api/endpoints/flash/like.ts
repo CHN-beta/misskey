@@ -10,6 +10,8 @@ export const meta = {
 
 	requireCredential: true,
 
+	prohibitMoved: true,
+
 	kind: 'write:flash-likes',
 
 	errors: {
@@ -64,12 +66,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			}
 
 			// if already liked
-			const exist = await this.flashLikesRepository.findOneBy({
-				flashId: flash.id,
-				userId: me.id,
+			const exist = await this.flashLikesRepository.exist({
+				where: {
+					flashId: flash.id,
+					userId: me.id,
+				},
 			});
 
-			if (exist != null) {
+			if (exist) {
 				throw new ApiError(meta.errors.alreadyLiked);
 			}
 

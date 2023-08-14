@@ -10,6 +10,8 @@ export const meta = {
 
 	requireCredential: true,
 
+	prohibitMoved: true,
+
 	kind: 'write:gallery-likes',
 
 	errors: {
@@ -64,12 +66,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			}
 
 			// if already liked
-			const exist = await this.galleryLikesRepository.findOneBy({
-				postId: post.id,
-				userId: me.id,
+			const exist = await this.galleryLikesRepository.exist({
+				where: {
+					postId: post.id,
+					userId: me.id,
+				},
 			});
 
-			if (exist != null) {
+			if (exist) {
 				throw new ApiError(meta.errors.alreadyLiked);
 			}
 

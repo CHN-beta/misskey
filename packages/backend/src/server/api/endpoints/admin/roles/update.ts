@@ -33,6 +33,7 @@ export const paramDef = {
 		isPublic: { type: 'boolean' },
 		isModerator: { type: 'boolean' },
 		isAdministrator: { type: 'boolean' },
+		isExplorable: { type: 'boolean' },
 		asBadge: { type: 'boolean' },
 		canEditMembersByModerator: { type: 'boolean' },
 		displayOrder: { type: 'number' },
@@ -68,8 +69,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private globalEventService: GlobalEventService,
 	) {
 		super(meta, paramDef, async (ps) => {
-			const role = await this.rolesRepository.findOneBy({ id: ps.roleId });
-			if (role == null) {
+			const roleExist = await this.rolesRepository.exist({ where: { id: ps.roleId } });
+			if (!roleExist) {
 				throw new ApiError(meta.errors.noSuchRole);
 			}
 
@@ -85,6 +86,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				isPublic: ps.isPublic,
 				isModerator: ps.isModerator,
 				isAdministrator: ps.isAdministrator,
+				isExplorable: ps.isExplorable,
 				asBadge: ps.asBadge,
 				canEditMembersByModerator: ps.canEditMembersByModerator,
 				displayOrder: ps.displayOrder,

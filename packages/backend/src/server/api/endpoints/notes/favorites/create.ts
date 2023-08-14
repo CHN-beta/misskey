@@ -12,6 +12,7 @@ export const meta = {
 	tags: ['notes', 'favorites'],
 
 	requireCredential: true,
+	prohibitMoved: true,
 
 	kind: 'write:favorites',
 
@@ -62,12 +63,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			});
 
 			// if already favorited
-			const exist = await this.noteFavoritesRepository.findOneBy({
-				noteId: note.id,
-				userId: me.id,
+			const exist = await this.noteFavoritesRepository.exist({
+				where: {
+					noteId: note.id,
+					userId: me.id,
+				},
 			});
 
-			if (exist != null) {
+			if (exist) {
 				throw new ApiError(meta.errors.alreadyFavorited);
 			}
 

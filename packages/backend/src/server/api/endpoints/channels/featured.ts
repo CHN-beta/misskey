@@ -38,9 +38,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		super(meta, paramDef, async (ps, me) => {
 			const query = this.channelsRepository.createQueryBuilder('channel')
 				.where('channel.lastNotedAt IS NOT NULL')
+				.andWhere('channel.isArchived = FALSE')
 				.orderBy('channel.lastNotedAt', 'DESC');
 
-			const channels = await query.take(10).getMany();
+			const channels = await query.limit(10).getMany();
 
 			return await Promise.all(channels.map(x => this.channelEntityService.pack(x, me)));
 		});

@@ -4,7 +4,7 @@ import { $i, iAmModerator } from '@/account';
 import MkLoading from '@/pages/_loading_.vue';
 import MkError from '@/pages/_error_.vue';
 
-const page = (loader: AsyncComponentLoader<any>) => defineAsyncComponent({
+export const page = (loader: AsyncComponentLoader<any>) => defineAsyncComponent({
 	loader: loader,
 	loadingComponent: MkLoading,
 	errorComponent: MkError,
@@ -30,6 +30,10 @@ export const routes = [{
 	name: 'note',
 	path: '/notes/:noteId',
 	component: page(() => import('./pages/note.vue')),
+}, {
+	name: 'list',
+	path: '/list/:listId',
+	component: page(() => import('./pages/list.vue')),
 }, {
 	path: '/clips/:clipId',
 	component: page(() => import('./pages/clip.vue')),
@@ -164,7 +168,7 @@ export const routes = [{
 	}, {
 		path: '/migration',
 		name: 'migration',
-		component: page(() => import('./pages/settings/migration.vue'))
+		component: page(() => import('./pages/settings/migration.vue')),
 	}, {
 		path: '/custom-css',
 		name: 'general',
@@ -173,14 +177,6 @@ export const routes = [{
 		path: '/accounts',
 		name: 'profile',
 		component: page(() => import('./pages/settings/accounts.vue')),
-	}, {
-		path: '/account-info',
-		name: 'other',
-		component: page(() => import('./pages/settings/account-info.vue')),
-	}, {
-		path: '/delete-account',
-		name: 'other',
-		component: page(() => import('./pages/settings/delete-account.vue')),
 	}, {
 		path: '/other',
 		name: 'other',
@@ -205,6 +201,10 @@ export const routes = [{
 }, {
 	path: '/about-misskey',
 	component: page(() => import('./pages/about-misskey.vue')),
+}, {
+	path: '/invite',
+	name: 'invite',
+	component: page(() => import('./pages/invite.vue')),
 }, {
 	path: '/ads',
 	component: page(() => import('./pages/ads.vue')),
@@ -246,9 +246,6 @@ export const routes = [{
 }, {
 	path: '/scratchpad',
 	component: page(() => import('./pages/scratchpad.vue')),
-}, {
-	path: '/preview',
-	component: page(() => import('./pages/preview.vue')),
 }, {
 	path: '/auth/:token',
 	component: page(() => import('./pages/auth.vue')),
@@ -396,6 +393,10 @@ export const routes = [{
 		name: 'settings',
 		component: page(() => import('./pages/admin/settings.vue')),
 	}, {
+		path: '/branding',
+		name: 'branding',
+		component: page(() => import('./pages/admin/branding.vue')),
+	}, {
 		path: '/moderation',
 		name: 'moderation',
 		component: page(() => import('./pages/admin/moderation.vue')),
@@ -427,6 +428,14 @@ export const routes = [{
 		path: '/other-settings',
 		name: 'other-settings',
 		component: page(() => import('./pages/admin/other-settings.vue')),
+	}, {
+		path: '/server-rules',
+		name: 'server-rules',
+		component: page(() => import('./pages/admin/server-rules.vue')),
+	}, {
+		path: '/invites',
+		name: 'invites',
+		component: page(() => import('./pages/admin/invites.vue')),
 	}, {
 		path: '/',
 		component: page(() => import('./pages/_empty_.vue')),
@@ -504,45 +513,16 @@ export const routes = [{
 	component: page(() => import('./pages/not-found.vue')),
 }];
 
-export const mainRouter = new Router(routes, location.pathname + location.search + location.hash);
+export const mainRouter = new Router(routes, location.pathname + location.search + location.hash, !!$i, page(() => import('@/pages/not-found.vue')));
 
 window.history.replaceState({ key: mainRouter.getCurrentKey() }, '', location.href);
 
-// TODO: このファイルでスクロール位置も管理する設計だとdeckに対応できないのでなんとかする
-// スクロール位置取得+スクロール位置設定関数をprovideする感じでも良いかも
-
-const scrollPosStore = new Map<string, number>();
-
-window.setInterval(() => {
-	scrollPosStore.set(window.history.state?.key, window.scrollY);
-}, 1000);
-
 mainRouter.addListener('push', ctx => {
 	window.history.pushState({ key: ctx.key }, '', ctx.path);
-	const scrollPos = scrollPosStore.get(ctx.key) ?? 0;
-	window.scroll({ top: scrollPos, behavior: 'instant' });
-	if (scrollPos !== 0) {
-		window.setTimeout(() => { // 遷移直後はタイミングによってはコンポーネントが復元し切ってない可能性も考えられるため少し時間を空けて再度スクロール
-			window.scroll({ top: scrollPos, behavior: 'instant' });
-		}, 100);
-	}
-});
-
-mainRouter.addListener('replace', ctx => {
-	window.history.replaceState({ key: ctx.key }, '', ctx.path);
-});
-
-mainRouter.addListener('same', () => {
-	window.scroll({ top: 0, behavior: 'smooth' });
 });
 
 window.addEventListener('popstate', (event) => {
-	mainRouter.replace(location.pathname + location.search + location.hash, event.state?.key, false);
-	const scrollPos = scrollPosStore.get(event.state?.key) ?? 0;
-	window.scroll({ top: scrollPos, behavior: 'instant' });
-	window.setTimeout(() => { // 遷移直後はタイミングによってはコンポーネントが復元し切ってない可能性も考えられるため少し時間を空けて再度スクロール
-		window.scroll({ top: scrollPos, behavior: 'instant' });
-	}, 100);
+	mainRouter.replace(location.pathname + location.search + location.hash, event.state?.key);
 });
 
 export function useRouter(): Router {

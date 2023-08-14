@@ -47,17 +47,26 @@ export class ChannelEntityService {
 
 		const banner = channel.bannerId ? await this.driveFilesRepository.findOneBy({ id: channel.bannerId }) : null;
 
-		const hasUnreadNote = meId ? (await this.noteUnreadsRepository.findOneBy({ noteChannelId: channel.id, userId: meId })) != null : undefined;
+		const hasUnreadNote = meId ? await this.noteUnreadsRepository.exist({
+			where: {
+				noteChannelId: channel.id,
+				userId: meId,
+			},
+		}) : undefined;
 
-		const following = meId ? await this.channelFollowingsRepository.findOneBy({
-			followerId: meId,
-			followeeId: channel.id,
-		}) : null;
+		const isFollowing = meId ? await this.channelFollowingsRepository.exist({
+			where: {
+				followerId: meId,
+				followeeId: channel.id,
+			},
+		}) : false;
 
-		const favorite = meId ? await this.channelFavoritesRepository.findOneBy({
-			userId: meId,
-			channelId: channel.id,
-		}) : null;
+		const isFavorited = meId ? await this.channelFavoritesRepository.exist({
+			where: {
+				userId: meId,
+				channelId: channel.id,
+			},
+		}) : false;
 
 		const pinnedNotes = channel.pinnedNoteIds.length > 0 ? await this.notesRepository.find({
 			where: {
@@ -74,12 +83,14 @@ export class ChannelEntityService {
 			userId: channel.userId,
 			bannerUrl: banner ? this.driveFileEntityService.getPublicUrl(banner) : null,
 			pinnedNoteIds: channel.pinnedNoteIds,
+			color: channel.color,
+			isArchived: channel.isArchived,
 			usersCount: channel.usersCount,
 			notesCount: channel.notesCount,
 
 			...(me ? {
-				isFollowing: following != null,
-				isFavorited: favorite != null,
+				isFollowing,
+				isFavorited,
 				hasUnreadNote,
 			} : {}),
 

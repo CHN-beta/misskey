@@ -10,6 +10,8 @@ export const meta = {
 
 	requireCredential: true,
 
+	prohibitMoved: true,
+
 	kind: 'write:clip-favorite',
 
 	errors: {
@@ -56,12 +58,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				throw new ApiError(meta.errors.noSuchClip);
 			}
 
-			const exist = await this.clipFavoritesRepository.findOneBy({
-				clipId: clip.id,
-				userId: me.id,
+			const exist = await this.clipFavoritesRepository.exist({
+				where: {
+					clipId: clip.id,
+					userId: me.id,
+				},
 			});
 
-			if (exist != null) {
+			if (exist) {
 				throw new ApiError(meta.errors.alreadyFavorited);
 			}
 

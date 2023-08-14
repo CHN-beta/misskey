@@ -11,6 +11,8 @@ export const meta = {
 
 	requireCredential: true,
 
+	prohibitMoved: true,
+
 	kind: 'write:account',
 
 	errors: {
@@ -71,7 +73,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 		@Inject(DI.userListsRepository)
 		private userListsRepository: UserListsRepository,
-		
+
 		private antennaEntityService: AntennaEntityService,
 		private globalEventService: GlobalEventService,
 	) {
@@ -110,6 +112,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				withReplies: ps.withReplies,
 				withFile: ps.withFile,
 				notify: ps.notify,
+				isActive: true,
+				lastUsedAt: new Date(),
 			});
 
 			this.globalEventService.publishInternalEvent('antennaUpdated', await this.antennasRepository.findOneByOrFail({ id: antenna.id }));

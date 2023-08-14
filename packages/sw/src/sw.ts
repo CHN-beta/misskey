@@ -21,6 +21,10 @@ globalThis.addEventListener('activate', ev => {
 	);
 });
 
+function offlineContentHTML(): string {
+	return `<!doctype html>Offline. Service Worker @${_VERSION_} <button onclick="location.reload()">reload</button>`
+}
+
 globalThis.addEventListener('fetch', ev => {
 	let isHTMLRequest = false;
 	if (ev.request.headers.get('sec-fetch-dest') === 'document') {
@@ -34,7 +38,14 @@ globalThis.addEventListener('fetch', ev => {
 	if (!isHTMLRequest) return;
 	ev.respondWith(
 		fetch(ev.request)
-			.catch(() => new Response(`Offline. Service Worker @${_VERSION_}`, { status: 200 })),
+			.catch(() => {
+				return new Response(offlineContentHTML(), {
+					status: 200,
+					headers: {
+						'content-type': 'text/html',
+					},
+				});
+			}),
 	);
 });
 
@@ -56,7 +67,7 @@ globalThis.addEventListener('push', ev => {
 				return createNotification(data);
 			case 'readAllNotifications':
 				await globalThis.registration.getNotifications()
-					.then(notifications => notifications.forEach(n => n.close()));
+					.then(notifications => notifications.forEach(n => n.tag !== 'read_notification' && n.close()));
 				break;
 		}
 
@@ -133,7 +144,7 @@ globalThis.addEventListener('notificationclick', (ev: ServiceWorkerGlobalScopeEv
 				switch (action) {
 					case 'markAllAsRead':
 						await globalThis.registration.getNotifications()
-							.then(notifications => notifications.forEach(n => n.close()));
+							.then(notifications => notifications.forEach(n => n.tag !== 'read_notification' && n.close()));
 						await get('accounts').then(accounts => {
 							return Promise.all(accounts.map(async account => {
 								await swos.sendMarkAllAsRead(account.id);

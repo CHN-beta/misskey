@@ -55,6 +55,7 @@ import { UserPending } from '@/models/entities/UserPending.js';
 import { UserProfile } from '@/models/entities/UserProfile.js';
 import { UserPublickey } from '@/models/entities/UserPublickey.js';
 import { UserSecurityKey } from '@/models/entities/UserSecurityKey.js';
+import { UserMemo } from '@/models/entities/UserMemo.js';
 import { Webhook } from '@/models/entities/Webhook.js';
 import { Channel } from '@/models/entities/Channel.js';
 import { RetentionAggregation } from '@/models/entities/RetentionAggregation.js';
@@ -62,6 +63,7 @@ import { Role } from '@/models/entities/Role.js';
 import { RoleAssignment } from '@/models/entities/RoleAssignment.js';
 import { Flash } from '@/models/entities/Flash.js';
 import { FlashLike } from '@/models/entities/FlashLike.js';
+import { UserListFavorite } from './entities/UserListFavorite.js';
 import type { Repository } from 'typeorm';
 
 export {
@@ -116,6 +118,7 @@ export {
 	UserIp,
 	UserKeypair,
 	UserList,
+	UserListFavorite,
 	UserListJoining,
 	UserNotePining,
 	UserPending,
@@ -129,6 +132,7 @@ export {
 	RoleAssignment,
 	Flash,
 	FlashLike,
+	UserMemo,
 };
 
 export type AbuseUserReportsRepository = Repository<AbuseUserReport>;
@@ -182,6 +186,7 @@ export type UsersRepository = Repository<User>;
 export type UserIpsRepository = Repository<UserIp>;
 export type UserKeypairsRepository = Repository<UserKeypair>;
 export type UserListsRepository = Repository<UserList>;
+export type UserListFavoritesRepository = Repository<UserListFavorite>;
 export type UserListJoiningsRepository = Repository<UserListJoining>;
 export type UserNotePiningsRepository = Repository<UserNotePining>;
 export type UserPendingsRepository = Repository<UserPending>;
@@ -195,3 +200,4 @@ export type RolesRepository = Repository<Role>;
 export type RoleAssignmentsRepository = Repository<RoleAssignment>;
 export type FlashsRepository = Repository<Flash>;
 export type FlashLikesRepository = Repository<FlashLike>;
+export type UserMemoRepository = Repository<UserMemo>;
