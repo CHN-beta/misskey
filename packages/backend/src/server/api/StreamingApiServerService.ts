@@ -16,7 +16,6 @@ import MainStreamConnection from './stream/index.js';
 import { ChannelsService } from './stream/ChannelsService.js';
 import type * as http from 'node:http';
 
-
 @Injectable()
 export class StreamingApiServerService {
 	#wss: WebSocket.WebSocketServer;
