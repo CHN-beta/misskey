@@ -79,9 +79,6 @@ importers:
       ncp:
         specifier: 2.0.0
         version: 2.0.0
-      pnpm:
-        specifier: 10.6.1
-        version: 10.6.1
       start-server-and-test:
         specifier: 2.0.10
         version: 2.0.10
@@ -8603,11 +8600,6 @@ packages:
   pngjs@5.0.0:
     resolution: {integrity: sha512-40QW5YalBNfQo5yRYmiw7Yz6TKKVr3h6970B2YE+3fQpsWcrbj1PzJgxeJ19DRQjhMbKPIuMY8rFaXc8moolVw==}
     engines: {node: '>=10.13.0'}
-
-  pnpm@10.6.1:
-    resolution: {integrity: sha512-QO4Jr0B/qfu1+/uOHLQPu3TArww+EOkiTXtTx2WFKGFbLJJFDnTPrZHjotyv485AUNgL2nHXV3VtLOK2YhPpow==}
-    engines: {node: '>=18.12'}
-    hasBin: true
 
   polished@4.2.2:
     resolution: {integrity: sha512-Sz2Lkdxz6F2Pgnpi9U5Ng/WdWAUZxmHrNPoVlm3aAemxoy2Qy7LGjQg4uf8qKelDAUW94F4np3iH2YPf2qefcQ==}
@@ -19925,8 +19917,6 @@ snapshots:
       irregular-plurals: 3.5.0
 
   pngjs@5.0.0: {}
-
-  pnpm@10.6.1: {}
 
   polished@4.2.2:
     dependencies:
