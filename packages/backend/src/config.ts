@@ -11,6 +11,7 @@ import type * as Sentry from '@sentry/node';
 import type * as SentryVue from '@sentry/vue';
 import type { RedisOptions } from 'ioredis';
 import type { ManifestChunk } from 'vite';
+import process from 'node:process';
 
 type RedisOptionsSource = Partial<RedisOptions> & {
 	host: string;
@@ -237,9 +238,7 @@ const projectBuiltDir = resolve(rootDir, 'built');
 
 const compiledConfigFilePathForTest = resolve(projectBuiltDir, '._config_.json');
 
-export const compiledConfigFilePath = fs.existsSync(compiledConfigFilePathForTest)
-	? compiledConfigFilePathForTest
-	: resolve(projectBuiltDir, '.config.json');
+export const compiledConfigFilePath = process.env.MISSKEY_CONFIG_JSON;
 
 export function loadConfig(): Config {
 	if (!fs.existsSync(compiledConfigFilePath)) {

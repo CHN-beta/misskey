@@ -44,11 +44,4 @@ function yamlToJson(ymlPath) {
 	}), 'utf-8');
 }
 
-if (process.env.MISSKEY_CONFIG_YML) {
-	const customYmlPath = resolve(configDir, process.env.MISSKEY_CONFIG_YML);
-	yamlToJson(customYmlPath);
-} else {
-	yamlToJson(resolve(configDir, process.env.NODE_ENV === 'test' ? 'test.yml' : 'default.yml'));
-}
-
 console.log('Configuration compiled ✓');
